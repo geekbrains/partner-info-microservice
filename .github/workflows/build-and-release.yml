@@ -1,0 +1,79 @@
+name: Release Spring Boot Version
+
+on:
+  push:
+    branches:
+    - main
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+
+    steps:
+      - name: 🔄 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: ☕ Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: 🧾 Extract version from pom.xml
+        id: get_version
+        run: |
+          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: ❌ Fail if version is not SNAPSHOT
+        run: |
+          if [[ "${{ steps.get_version.outputs.version }}" != *-SNAPSHOT ]]; then
+            echo "ERROR: Version must be a -SNAPSHOT version to release!"
+            exit 1
+          fi
+
+      - name: 🔧 Remove -SNAPSHOT for release version
+        id: release_version
+        run: |
+          RELEASE_VERSION="${VERSION/-SNAPSHOT/}"
+          echo "RELEASE_VERSION=$RELEASE_VERSION" >> $GITHUB_ENV
+          echo "release_version=$RELEASE_VERSION" >> $GITHUB_OUTPUT
+
+      - name: 🏗️ Set release version in pom.xml
+        run: |
+          mvn versions:set -DnewVersion=${{ env.RELEASE_VERSION }} -DgenerateBackupPoms=false
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor }}@users.noreply.github.com"
+          git commit -am "chore: release version ${{ env.RELEASE_VERSION }}"
+
+      - name: 📦 Build JAR
+        run: mvn clean package -DskipTests
+
+      - name: 🏷️ Create Git Tag
+        run: |
+          git tag "v${{ env.RELEASE_VERSION }}"
+          git push origin "v${{ env.RELEASE_VERSION }}"
+
+      - name: 🚀 Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: "v${{ env.RELEASE_VERSION }}"
+          name: "v${{ env.RELEASE_VERSION }}"
+          files: target/*.jar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: ⬆️ Bump to next SNAPSHOT version
+        run: |
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$(echo ${{ env.RELEASE_VERSION }})"
+          PATCH=$((PATCH + 1))
+          NEXT_VERSION="${MAJOR}.${MINOR}.${PATCH}-SNAPSHOT"
+
+          mvn versions:set -DnewVersion=$NEXT_VERSION -DgenerateBackupPoms=false
+          git commit -am "chore: bump version to $NEXT_VERSION"
+          git push origin main
