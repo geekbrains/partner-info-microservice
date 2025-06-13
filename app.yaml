@@ -1,0 +1,12 @@
+service: partner-info-service
+runtime: java17  # or java21
+instance_class: F1  # Choose based on need (F1 is smallest)
+# entrypoint: java -Xmx512m -jar target/player-info-microservice-0.0.1-SNAPSHOT.jar having this will try to run this in flexible
+
+# automatic_scaling:
+#  target_cpu_utilization: 0.65
+#  min_instances: 1
+#  max_instances: 5
+
+#env_variables:
+#  SPRING_PROFILES_ACTIVE: "gae"
