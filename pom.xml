@@ -10,9 +10,9 @@
 	</parent>
 	<groupId>com.example</groupId>
 	<artifactId>partner-info-microservice</artifactId>
-	<version>0.0.3-SNAPSHOT</version>
+	<version>0.0.4-SNAPSHOT</version>
 	<name>partner-info-microservice</name>
-	<description>a dummy partner microservice</description>
+	<description>a dummy partner microservice for ELK and Argo Test</description>
 	<url/>
 	<licenses>
 		<license/>
