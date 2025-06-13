@@ -6,6 +6,9 @@ on:
     - main
   workflow_dispatch:
 
+permissions:
+  contents: write  # Allow write access to the repository content (like pushing code)
+
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -73,8 +76,9 @@ jobs:
           IFS='.' read -r MAJOR MINOR PATCH <<< "$(echo ${{ env.RELEASE_VERSION }})"
           PATCH=$((PATCH + 1))
           NEXT_VERSION="${MAJOR}.${MINOR}.${PATCH}-SNAPSHOT"
-
           mvn versions:set -DnewVersion=$NEXT_VERSION -DgenerateBackupPoms=false
+          git config user.name "github-actions"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
           git commit -am "chore: bump version to $NEXT_VERSION"
           git push origin main
 
