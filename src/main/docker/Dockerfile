@@ -5,7 +5,7 @@ FROM eclipse-temurin:17-jdk
 WORKDIR /app
 
 # Copy Spring Boot JAR file
-COPY target/myapp.jar app.jar
+COPY target/partner-info-microservice.jar app.jar
 
 # Expose port 8989 (configured in app config)
 EXPOSE 8989
