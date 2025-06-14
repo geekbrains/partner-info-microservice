@@ -91,11 +91,9 @@ jobs:
 
       - name: Build docker image
         run: |
-          docker build \
-          -f src/main/docker/Dockerfile \
-          -t ghcr.io/${{github.repository}}:$RELEASE_VERSION
+          docker build -f src/main/docker/Dockerfile -t ghcr.io/${{github.repository}}:${{ env.RELEASE_VERSION }})
 
       - name: Push Docker image
         run: |
-          docker push ghcr.io/${{ github.repository }}:$RELEASE_VERSION
+          docker push ghcr.io/${{ github.repository }}:${{ env.RELEASE_VERSION }})
       
