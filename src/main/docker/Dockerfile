@@ -7,6 +7,8 @@ WORKDIR /app
 # Copy Spring Boot JAR file
 COPY target/partner-info-microservice.jar app.jar
 
+VOLUME ["/data", "/config"]
+
 # Expose port 8989 (configured in app config)
 EXPOSE 8989
 
