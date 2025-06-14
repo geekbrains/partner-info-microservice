@@ -95,5 +95,5 @@ jobs:
 
       - name: Build and push docker image
         run: |
-          docker buildx build -f src/main/docker/Dockerfile -t ghcr.io/${{github.repository}}:${{ env.RELEASE_VERSION }} --push .
+          docker buildx build --platform linux/amd64,linux/arm64 -f src/main/docker/Dockerfile -t ghcr.io/${{github.repository}}:${{ env.RELEASE_VERSION }} --push .
       
