@@ -42,18 +42,20 @@ public class PartnerController {
 
     @GetMapping
     public ResponseEntity<List<Partner>> getAllPartners(){
+        log.info("method {} invoked ", "getAllPartners");
         return ResponseEntity.ok(partnerList);
     }
 
     @PostMapping
     public ResponseEntity<String> addPartner(@RequestBody Partner partner){
+        log.info("method {} invoked with request {}", "addPartner", partner);
         partnerList.add(partner);
         return ResponseEntity.ok("partner has been added successfully");
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<String> updatePartner(@PathVariable("id") String partnerKey, @RequestBody Partner partner){
-
+        log.info("method {} invoked with partnerKey {} and partner: {}", "updatePartner", partnerKey, partner);
         Partner partnerTobeUpdated=partnerList.stream()
                 .filter(partner1 -> partner1.getPartnerKey().equalsIgnoreCase(partnerKey)).findFirst().map(p->{
                     p.setPartnerName(partner.getPartnerName());
@@ -70,12 +72,13 @@ public class PartnerController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getPartnerById(@PathVariable("id") String id){
-
+        log.info("method {} invoked with partnerKey {}", "getPartnerById", id);
         List<Partner> partners=partnerList.stream().filter(partner -> partner.getPartnerKey().equalsIgnoreCase(id)).toList();
         if(partners.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No Partner Found");
         }
         Partner partner=partners.get(0);
+        log.info("partner found {}", partner);
         try{
             String url=playerServiceEndPoint+"/partner/"+partner.getPartnerKey();
             log.debug("url is {}", url);
@@ -85,11 +88,11 @@ public class PartnerController {
                 List<Player> players=playerResponseEntity.getBody();
                 partner.setPlayers(players);
             }
+            log.info("Complete partner object with players {}", partner);
             return ResponseEntity.ok(partner);
         }catch (Exception e){
             log.error("Exception occurred",e);
-            if(e instanceof HttpServerErrorException){
-                HttpServerErrorException serverErrorException=(HttpServerErrorException) e;
+            if(e instanceof HttpServerErrorException serverErrorException){
                 return ResponseEntity
                         .status(serverErrorException.getStatusCode())
                         .body(serverErrorException.getResponseBodyAsString());

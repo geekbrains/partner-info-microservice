@@ -65,4 +65,15 @@ public class Partner {
     public void setPlayers(List<Player> players) {
         this.players = players;
     }
+
+    @Override
+    public String toString() {
+        return "Partner{" +
+                "partnerKey='" + partnerKey + '\'' +
+                ", partnerName='" + partnerName + '\'' +
+                ", games=" + games +
+                ", enabled=" + enabled +
+                ", players=" + players +
+                '}';
+    }
 }
