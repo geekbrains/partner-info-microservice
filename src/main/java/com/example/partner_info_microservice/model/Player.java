@@ -45,4 +45,14 @@ public class Player {
     public String getPartnerId() {
         return partnerId;
     }
+
+    @Override
+    public String toString() {
+        return "Player{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", partnerId='" + partnerId + '\'' +
+                ", walletAmount=" + walletAmount +
+                '}';
+    }
 }

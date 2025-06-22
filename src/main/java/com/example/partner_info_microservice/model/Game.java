@@ -19,4 +19,12 @@ public class Game {
     public String getGameName() {
         return gameName;
     }
+
+    @Override
+    public String toString() {
+        return "Game{" +
+                "gameId='" + gameId + '\'' +
+                ", gameName='" + gameName + '\'' +
+                '}';
+    }
 }
